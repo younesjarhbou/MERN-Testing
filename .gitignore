@@ -30,3 +30,10 @@ yarn-error.log*
 /backend/coverage
 /backend/build
 /backend/.env
+/frontend/node_modules
+/frontend/package-lock.json
+/frontend/yarn-error.log
+/frontend/yarn.lock
+/frontend/coverage
+/frontend/build
+/frontend/.env.test
