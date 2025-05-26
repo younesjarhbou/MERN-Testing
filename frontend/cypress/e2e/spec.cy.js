@@ -129,48 +129,102 @@ describe('template spec', () => {
     registerUser('valid_username', 'valid_email@example.com', 'StrongPassword2025@@', 'User already exists');
   });
 
-  it('logs in successfully and checks for Logout button', () => {
-    // Function to perform login
-    const loginUser = (username, password) => {
-      // Assume these are the XPaths for the login fields and button
-      const usernameXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[2]/input';
-      const passwordXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[3]/input';
-      const loginButtonXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[5]/button';
-      
-      // Type credentials into the login form
-      cy.xpath(usernameXPath)
+  it('logs in successfully, checks for Logout button, and clicks Logout', () => {
+      // Function to perform login
+      const loginUser = (username, password) => {
+        // Assume these are the XPaths for the login fields and button
+        const usernameXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[2]/input';
+        const passwordXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[3]/input';
+        const loginButtonXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[5]/button';
+        
+        // Type credentials into the login form
+        cy.xpath(usernameXPath)
+          .should('be.visible')
+          .type(username);
+        
+        cy.xpath(passwordXPath)
+          .should('be.visible')
+          .type(password);
+        
+        // Click the login button
+        cy.xpath(loginButtonXPath)
+          .should('be.visible')
+          .click();
+      };
+  
+      // Visit the login page
+      cy.visit('http://localhost:3000/login');
+  
+      // Perform login
+      loginUser('valid_email@example.com', 'StrongPassword2025@@');
+  
+      // Verify redirection to the homepage
+      cy.url().should('eq', 'http://localhost:3000/');
+  
+      // Verify the Logout button is visible
+      const logoutButtonXPath = '//*[@id="root"]/div/nav/div[2]/div/button';
+      cy.xpath(logoutButtonXPath)
         .should('be.visible')
-        .type(username);
-      
-      cy.xpath(passwordXPath)
-        .should('be.visible')
-        .type(password);
-      
-      // Click the login button
-      cy.xpath(loginButtonXPath)
-        .should('be.visible')
+        .and(($button) => {
+          expect($button.text().trim()).to.equal('Logout');
+        });
+  
+      cy.log('Successfully logged in and Logout button is visible.');
+  
+      // Click the Logout button
+      cy.xpath(logoutButtonXPath)
         .click();
-    };
-
-    // Visit the login page
-    cy.visit('http://localhost:3000/login');
-
-    // Perform login
-    loginUser('valid_email@example.com', 'StrongPassword2025@@');
-
-    // Verify redirection to the homepage
-    cy.url().should('eq', 'http://localhost:3000/');
-
-    // Verify the Logout button is visible
-    const logoutButtonXPath = '//*[@id="root"]/div/nav/div[2]/div/button';
-    cy.xpath(logoutButtonXPath)
-      .should('be.visible')
-      .and(($button) => {
-        expect($button.text().trim()).to.equal('Logout');
-      });
-
-    cy.log('Successfully logged in and Logout button is visible.');
+  
+      // Verify redirection back to the login page after logout
+      cy.url().should('eq', 'http://localhost:3000/login');
+  
+      cy.log('Successfully logged out and redirected to the login page.');
   });
+  
+
+  it('fails to log in with wrong password and checks for error message', () => {
+      // Function to perform login
+      const loginUser = (username, password) => {
+        // Assume these are the XPaths for the login fields and button
+        const usernameXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[2]/input';
+        const passwordXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[3]/input';
+        const loginButtonXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[5]/button';
+        
+        // Type credentials into the login form
+        cy.xpath(usernameXPath)
+          .should('be.visible')
+          .type(username);
+        
+        cy.xpath(passwordXPath)
+          .should('be.visible')
+          .type(password);
+        
+        // Click the login button
+        cy.xpath(loginButtonXPath)
+          .should('be.visible')
+          .click();
+      };
+  
+      // Visit the login page
+      cy.visit('http://localhost:3000/login');
+  
+      // Perform login with wrong password
+      loginUser('valid_email@example.com', 'wrongPassword2025');
+  
+      // Verify that URL does not change to the homepage
+      cy.url().should('eq', 'http://localhost:3000/login');
+  
+      // Verify an error message is displayed upon incorrect login attempt
+      const errorMessageXPath = '//*[@id="root"]/div/div/section/div/div/div[2]/form/div[1]/div';
+      cy.xpath(errorMessageXPath)
+        .should('be.visible')
+        .and(($message) => {
+          expect($message.text().trim()).to.equal('Invalid credentials');
+        });
+  
+      cy.log('Login failed with wrong password, error message is displayed.');
+  });
+  
 
   it('simulates successful registration and performs post-registration task', () => {
     // Visit the registration page
