@@ -58,7 +58,7 @@ For this assessment, I selected a GitHub project involving a comprehensive web a
 
 3. **Set Up Environment Variables for Testing**: Create a `.env.test` file with the following content:
    ```
-   MONGO_URI=mongodb+srv://younesdev97:glvdX1KKJm3ahgzz@cluster0.4phcyzr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+   MONGO_URI=yourmongodblink
    ```
 
 4. **Start the Frontend Application**:
@@ -72,7 +72,12 @@ For this assessment, I selected a GitHub project involving a comprehensive web a
      ```bash
      npx cypress open
      ```
-   - Select the desired test from the Cypress interface.
+  - **Initiate the Cypress Testing Interface**:
+   - Access the configured E2E Testing environment.
+   - Select your preferred browser (Testing validated with Chrome V136).
+   - Click on the "Start E2E Testing" button.
+   - In the navigation panel on the left, go to the "Specs" section and select `spec.cy.js`.
+   - Observe the execution of automated frontend tests.
 
 ## Test Plan
 
@@ -127,30 +132,20 @@ For this assessment, I selected a GitHub project involving a comprehensive web a
 ## Bug Documentation
 
 ### Bug Reports
+### Newly Identified Bugs
 
-#### Bug Title: Registration Fails with Existing Email
-
-- **Severity:** Major
-- **Steps to Reproduce:** Attempt registration with an already used email.
-- **Expected Behavior:** Display the error message "User already exists".
-- **Actual Outcome:** No error message displayed.
-- **Suggested Fix:** Implement a backend check for existing emails prior to creating new accounts.
-
-#### Bug Title: Inconsistent Task Completion Status
-
-- **Severity:** Minor
-- **Steps to Reproduce:** Complete a task and refresh the page.
-- **Expected Behavior:** Task should remain marked as completed.
-- **Actual Outcome:** Task shows as incomplete post-refresh.
-- **Suggested Fix:** Persist completion status changes in the database.
-
-#### Bug Title: Weak Password Not Handled
+#### Bug Title: Duplicate Task Creation Allowed
 
 - **Severity:** Major
-- **Steps to Reproduce:** Register using a simple/weak password like "123".
-- **Expected Behavior:** Show error "Please enter a strong password".
-- **Actual Outcome:** Registration proceeds without warning.
-- **Suggested Fix:** Add backend validation to enforce password strength requirements.
+- **Description:** The system permits adding tasks with duplicate titles and descriptions, which results in redundancy.
+- **Suggested Fix:** Implement a validation check to prevent the creation of tasks with identical titles and descriptions.
+
+#### Bug Title: Forgotten Password Email Not Received
+
+- **Severity:** Major
+- **Description:** Users do not receive an email when using the "Forgot Password" feature. It appears there are missing or incorrectly configured `.env` fields for email settings labeled as `MAIL` and `PASSWORD`.
+- **Suggested Fix:** Ensure that the `MAIL` and `PASSWORD` fields are properly configured in the `.env` file, and verify SMTP settings to enable email delivery.
+
 
 ## Test Automation
 
